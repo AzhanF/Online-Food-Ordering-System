@@ -20,7 +20,6 @@ import { LoginComponent } from './login/login.component';
 import { TokenInterceptorInterceptor } from './services/token-interceptor.interceptor';
 import { AccordionLinkDirective } from './shared/accordion';
 
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,6 +32,7 @@ import { AccordionLinkDirective } from './shared/accordion';
     ForgotPasswordComponent,
     LoginComponent,
   ],
+
   imports: [
     BrowserModule,
     AppRoutingModule,
