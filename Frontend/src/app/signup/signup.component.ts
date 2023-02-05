@@ -52,7 +52,7 @@ export class SignupComponent implements OnInit {
     var data = {
       name: formData.name,
       email: formData.email,
-      phone: formData.contactNumber,
+      contactNumber: formData.contactNumber,
       password: formData.password,
     };
 
