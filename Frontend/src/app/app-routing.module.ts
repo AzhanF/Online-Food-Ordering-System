@@ -7,12 +7,12 @@ import { RouteGuardService } from './services/route-guard.service';
 const routes: Routes = [
   { path: '', component: HomeComponent },
   {
-    path: 'food',
+    path: 'cafe',
     component: FullComponent,
     children: [
       {
         path: '',
-        redirectTo: '/food/dashboard',
+        redirectTo: '/cafe/dashboard',
         pathMatch: 'full',
       },
       {

@@ -4,11 +4,12 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { saveAs } from 'file-saver';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { BillService } from 'src/app/services/bill.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { GlobalConstants } from 'src/app/shared/global-constants';
-import { ConfirmationComponent } from 'src/app/material-component/dialog/confirmation/confirmation.component';
-import { ViewBillProductsComponent } from 'src/app/material-component/dialog/view-bill-products/view-bill-products.component';
+import { ConfirmationComponent } from '../dialog/confirmation/confirmation.component';
+import { ViewBillProductsComponent } from '../dialog/view-bill-products/view-bill-products.component';
 
 @Component({
   selector: 'app-view-bill',
@@ -29,21 +30,25 @@ export class ViewBillComponent implements OnInit {
 
   constructor(
     private billService: BillService,
+    private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
     private snackBar: SnackbarService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.ngxService.start();
     this.tableData();
   }
 
   tableData() {
     this.billService.getBills().subscribe(
       (resp: any) => {
+        this.ngxService.stop();
         this.dataSource = new MatTableDataSource(resp.data);
       },
       (error) => {
+        this.ngxService.stop();
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {
@@ -73,6 +78,7 @@ export class ViewBillComponent implements OnInit {
   }
 
   downloadReportAction(value: any) {
+    this.ngxService.start();
     let data = {
       name: value.name,
       email: value.email,
@@ -85,6 +91,7 @@ export class ViewBillComponent implements OnInit {
 
     this.billService.getPDF(data).subscribe((resp) => {
       saveAs(resp, value.uuid + '.pdf');
+      this.ngxService.stop();
     });
   }
 
@@ -96,6 +103,7 @@ export class ViewBillComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmationComponent, dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe(
       (response) => {
+        this.ngxService.start();
         this.deleteProduct(value.id);
         dialogRef.close();
       }
@@ -105,11 +113,13 @@ export class ViewBillComponent implements OnInit {
   deleteProduct(id: any) {
     this.billService.delete(id).subscribe(
       (resp: any) => {
+        this.ngxService.stop();
         this.tableData();
         this.responseMessage = resp?.message;
         this.snackBar.openSnackBar(this.responseMessage, 'success');
       },
       (error) => {
+        this.ngxService.stop();
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {

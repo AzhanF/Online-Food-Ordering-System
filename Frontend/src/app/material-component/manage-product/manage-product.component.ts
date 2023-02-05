@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ProductService } from 'src/app/services/product.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { GlobalConstants } from 'src/app/shared/global-constants';
-import { ConfirmationComponent } from 'src/app/material-component/dialog/confirmation/confirmation.component';
-import { ProductComponent } from 'src/app/material-component/dialog/product/product.component';
+import { ConfirmationComponent } from '../dialog/confirmation/confirmation.component';
+import { ProductComponent } from '../dialog/product/product.component';
 
 @Component({
   selector: 'app-manage-product',
@@ -26,20 +27,25 @@ export class ManageProductComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
+    private ngxService: NgxUiLoaderService,
+    private dialog: MatDialog,
     private snackBar: SnackbarService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.ngxService.start();
     this.tableData();
   }
 
   tableData() {
     this.productService.getProducts().subscribe(
       (resp: any) => {
+        this.ngxService.stop();
         this.dataSource = new MatTableDataSource(resp.data);
       },
       (error) => {
+        this.ngxService.stop();
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {
@@ -102,6 +108,7 @@ export class ManageProductComponent implements OnInit {
 
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe(
       (resp: any) => {
+        this.ngxService.start();
         this.deleteProduct(value.id);
         dialogRef.close();
       }
@@ -111,11 +118,13 @@ export class ManageProductComponent implements OnInit {
   deleteProduct(id: any) {
     this.productService.delete(id).subscribe(
       (resp: any) => {
+        this.ngxService.stop();
         this.tableData();
         this.responseMessage = resp?.message;
         this.snackBar.openSnackBar(this.responseMessage, 'success');
       },
       (error) => {
+        this.ngxService.stop();
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {
@@ -134,10 +143,12 @@ export class ManageProductComponent implements OnInit {
 
     this.productService.updateStatus(data).subscribe(
       (resp: any) => {
+        this.ngxService.stop();
         this.responseMessage = resp?.message;
         this.snackBar.openSnackBar(this.responseMessage, 'success');
       },
       (error) => {
+        this.ngxService.stop();
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {
