@@ -27,8 +27,9 @@ export class ManageUserComponent implements OnInit {
   }
 
   tableData() {
-    this.userService.getUsers().subscribe(
+    this.userService.getAllUsers().subscribe(
       (resp: any) => {
+        console.log(resp.data);
         this.ngxService.stop();
         this.dataSource = new MatTableDataSource(resp.data);
       },

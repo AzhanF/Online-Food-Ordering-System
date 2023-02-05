@@ -41,7 +41,7 @@ export class UserService {
     );
   }
 
-  getUsers() {
+  getAllUsers() {
     return this.http.get(`${this.url}/user/get`);
   }
 
