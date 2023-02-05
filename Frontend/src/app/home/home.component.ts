@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { ForgotPasswordComponent } from 'src/app/forgot-password/forgot-password.component';
+import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 import { LoginComponent } from '../login/login.component';
 import { UserService } from '../services/user.service';
 import { SignupComponent } from '../signup/signup.component';
@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
     if (localStorage.getItem('token') !== null) {
       this.userService.checkToken().subscribe(
         (resp: any) => {
-          this.router.navigate(['/food/dashboard']);
+          this.router.navigate(['/cafe/dashboard']);
         },
         (error) => {
           console.log(error);

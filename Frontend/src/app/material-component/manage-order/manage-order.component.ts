@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { BillService } from 'src/app/services/bill.service';
 import { CategoryService } from 'src/app/services/category.service';
 import { ProductService } from 'src/app/services/product.service';
@@ -34,10 +35,12 @@ export class ManageOrderComponent implements OnInit {
     private categoryService: CategoryService,
     private productService: ProductService,
     private billService: BillService,
+    private ngxService: NgxUiLoaderService,
     private snackBar: SnackbarService
   ) {}
 
   ngOnInit(): void {
+    this.ngxService.start();
 
     this.getCategories();
 
@@ -69,9 +72,11 @@ export class ManageOrderComponent implements OnInit {
   getCategories() {
     this.categoryService.getCategories().subscribe(
       (resp: any) => {
+        this.ngxService.stop();
         this.categories = resp.data;
       },
       (error) => {
+        this.ngxService.stop();
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {
@@ -91,6 +96,7 @@ export class ManageOrderComponent implements OnInit {
         this.manageOrderForm.controls.total.setValue(0);
       },
       (error) => {
+        this.ngxService.stop();
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {
@@ -110,6 +116,7 @@ export class ManageOrderComponent implements OnInit {
         this.manageOrderForm.controls.total.setValue(this.price * 1);
       },
       (error) => {
+        this.ngxService.stop();
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {
@@ -197,6 +204,7 @@ export class ManageOrderComponent implements OnInit {
   }
 
   submitAction() {
+    this.ngxService.start();
     let formData = this.manageOrderForm.value;
     let data = {
       name: formData.name,
@@ -215,6 +223,7 @@ export class ManageOrderComponent implements OnInit {
         this.totalAmount = 0;
       },
       (error) => {
+        this.ngxService.stop();
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {
@@ -232,6 +241,7 @@ export class ManageOrderComponent implements OnInit {
 
     this.billService.getPDF(data).subscribe((resp: any) => {
       saveAs(resp, fileName + '.pdf');
+      this.ngxService.stop();
     });
   }
 }

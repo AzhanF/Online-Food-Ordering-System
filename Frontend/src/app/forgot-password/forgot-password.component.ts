@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { SnackbarService } from 'src/app/services/snackbar.service';
-import { UserService } from 'src/app/services/user.service';
-import { GlobalConstants } from 'src/app/shared/global-constants';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { SnackbarService } from '../services/snackbar.service';
+import { UserService } from '../services/user.service';
+import { GlobalConstants } from '../shared/global-constants';
 
 @Component({
   selector: 'app-forgot-password',
@@ -20,6 +21,7 @@ export class ForgotPasswordComponent implements OnInit {
     private userService: UserService,
     private snackBar: SnackbarService,
     private dialogRef: MatDialogRef<ForgotPasswordComponent>,
+    private ngxService: NgxUiLoaderService
   ) {}
 
   ngOnInit(): void {
@@ -32,6 +34,7 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   handleSubmit() {
+    this.ngxService.start();
     let formData = this.forgotPasswordForm.value;
     let data = {
       email: formData.email,
@@ -39,11 +42,13 @@ export class ForgotPasswordComponent implements OnInit {
 
     this.userService.forgotPassword(data).subscribe(
       (resp: any) => {
+        this.ngxService.stop();
         this.responseMessage = resp?.message;
         this.dialogRef.close();
         this.snackBar.openSnackBar(this.responseMessage, '');
       },
       (error) => {
+        this.ngxService.stop();
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {

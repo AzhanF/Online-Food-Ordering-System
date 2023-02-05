@@ -15,10 +15,29 @@ import { AppHeaderComponent } from './layouts/full/header/header.component';
 import { AppSidebarComponent } from './layouts/full/sidebar/sidebar.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SignupComponent } from './signup/signup.component';
+import {
+  NgxUiLoaderConfig,
+  NgxUiLoaderModule,
+  PB_DIRECTION,
+  SPINNER,
+} from 'ngx-ui-loader';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { LoginComponent } from './login/login.component';
 import { TokenInterceptorInterceptor } from './services/token-interceptor.interceptor';
 import { AccordionLinkDirective } from './shared/accordion';
+
+const ngx_ui_loader_config: NgxUiLoaderConfig = {
+  text: 'Loading...',
+  textColor: '#FFFFFF',
+  textPosition: 'center-center',
+  pbColor: 'red',
+  bgsColor: 'red',
+  fgsColor: 'red',
+  fgsType: SPINNER.chasingDots,
+  fgsSize: 100,
+  pbDirection: PB_DIRECTION.leftToRight,
+  pbThickness: 5,
+};
 
 @NgModule({
   declarations: [
@@ -43,6 +62,7 @@ import { AccordionLinkDirective } from './shared/accordion';
     FlexLayoutModule,
     SharedModule,
     HttpClientModule,
+    NgxUiLoaderModule.forRoot(ngx_ui_loader_config),
   ],
   providers: [
     HttpClientModule,
