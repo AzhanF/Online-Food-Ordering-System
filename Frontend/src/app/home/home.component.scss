@@ -69,7 +69,7 @@ body {
   padding: 6px;
   text-align: center;
   color: white;
-  background: #7b1fa2;
+  background: #e53935;
 }
 
 /* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
@@ -111,7 +111,7 @@ body {
   display: flex;
   align-items: center;
   justify-content:center;
-  background-color: #7b1fa2;
+  background-color: #e53935;
 }
 
 nav {
@@ -139,7 +139,28 @@ a {
   color: #ffffff;
   position: relative;
   font-size: 1.25em;
-  cursor: pointer;
+}
+
+a::after {
+  content:"";
+  top: 80%;
+  border-bottom: 2px solid #F8E71C;
+  transition: all 0.35s;
+  position: absolute;
+}
+
+a:hover::after {
+  transition: all 0.35s;
+}
+
+a::after {
+  right: 50%;
+  left: 50%;
+}
+
+a:hover::after {
+  right: 0;
+  left: 0;
 }
 
 @media (max-width: 1024px) {
@@ -207,7 +228,7 @@ a {
   -webkit-filter: blur(3px);
   
   /* Full height */
-  height: 50%; 
+  height: 100%; 
   
   /* Center and scale the image nicely */
   background-position: center;
