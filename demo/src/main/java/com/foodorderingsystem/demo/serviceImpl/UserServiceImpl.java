@@ -128,7 +128,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<String> changePassword(Map<String, String> requestMap) {
         try {
-            System.out.println("herrreeee");
             User user = userDao.findByEmail(jwtFilter.getCurrentUser());
             if (user != null) {
                 if (user.getPassword().equalsIgnoreCase(requestMap.get("oldPassword"))) {

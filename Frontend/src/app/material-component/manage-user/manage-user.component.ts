@@ -55,7 +55,7 @@ export class ManageUserComponent implements OnInit {
       status: status.toString(),
       id: id,
     };
-
+    
     this.userService.update(data).subscribe(
       (resp: any) => {
         this.ngxService.stop();
