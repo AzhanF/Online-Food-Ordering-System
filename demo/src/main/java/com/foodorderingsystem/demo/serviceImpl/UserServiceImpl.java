@@ -73,11 +73,11 @@ public class UserServiceImpl implements UserService {
                     return new ResponseEntity<String>("{\"token\":\"" +
                             jwtUtil.generateToken(customerUsersDetailsService.getUserDetail().getEmail(),
                                     customerUsersDetailsService.getUserDetail().getRole())
-                            + "\"}", HttpStatus.OK);
-                } else {
-                    return new ResponseEntity<String>("{\"message\":\"" + "Wait for admin approval." + "\"}",
-                            HttpStatus.BAD_REQUEST);
+                            + "\", \"message\":\"" + "Login Success" + "\"}", HttpStatus.OK);
                 }
+                return new ResponseEntity<String>("{\"message\":\"" + "Wait for admin approval." + "\"}",
+                        HttpStatus.BAD_REQUEST);
+
             }
 
         } catch (Exception exception) {
@@ -121,12 +121,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<String> checkToken() {
+        System.out.println("checkToken");
         return FoodUtils.getResponseEntity("true", HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<String> changePassword(Map<String, String> requestMap) {
         try {
+            System.out.println("herrreeee");
             User user = userDao.findByEmail(jwtFilter.getCurrentUser());
             if (user != null) {
                 if (user.getPassword().equalsIgnoreCase(requestMap.get("oldPassword"))) {
@@ -169,7 +171,7 @@ public class UserServiceImpl implements UserService {
     private boolean validateSignUpMap(Map<String, String> requestMap) {
         return requestMap.containsKey("name")
                 && requestMap.containsKey("contactNumber")
-                && requestMap.containsKey("email") 
+                && requestMap.containsKey("email")
                 && requestMap.containsKey("password");
     }
 
