@@ -46,6 +46,7 @@ export class ViewBillComponent implements OnInit {
       (resp: any) => {
         this.ngxService.stop();
         this.dataSource = new MatTableDataSource(resp);
+        
       },
       (error) => {
         this.ngxService.stop();
