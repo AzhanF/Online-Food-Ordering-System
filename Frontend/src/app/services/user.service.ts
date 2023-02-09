@@ -30,7 +30,7 @@ export class UserService {
   }
 
   checkToken() {
-    return this.http.get(`${this.url}/user/checkToken`);
+    return this.http.get(`${this.url}/user/check-token`);
   }
 
   changePassword(data: any) {
@@ -46,6 +46,6 @@ export class UserService {
   }
 
   update(data: any) {
-    return this.http.patch(`${this.url}/user/update`, data, this.jsonHeader);
+    return this.http.post(`${this.url}/user/update`, data, this.jsonHeader);
   }
 }

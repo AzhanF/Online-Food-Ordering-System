@@ -18,7 +18,7 @@ export class ProductService {
   }
 
   update(data: any) {
-    return this.http.patch(`${this.url}/product/update`, data, this.jsonHeader);
+    return this.http.post(`${this.url}/product/update`, data, this.jsonHeader);
   }
 
   getProducts() {
@@ -26,8 +26,8 @@ export class ProductService {
   }
 
   updateStatus(data: any) {
-    return this.http.patch(
-      `${this.url}/product/updateStatus`,
+    return this.http.post(
+      `${this.url}/product/update-status`,
       data,
       this.jsonHeader
     );
