@@ -34,7 +34,7 @@ export class ProductService {
   }
 
   delete(id: any) {
-    return this.http.delete(
+    return this.http.post(
       `${this.url}/product/delete/${id}`,
       this.jsonHeader
     );

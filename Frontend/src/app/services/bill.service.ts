@@ -33,6 +33,6 @@ export class BillService {
   }
 
   delete(id: any) {
-    return this.http.delete(`${this.url}/bill/delete/${id}`, this.jsonHeader);
+    return this.http.post(`${this.url}/bill/delete/${id}`, this.jsonHeader);
   }
 }
