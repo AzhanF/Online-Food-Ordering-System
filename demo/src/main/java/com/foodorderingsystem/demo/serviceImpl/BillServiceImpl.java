@@ -11,6 +11,8 @@ import com.foodorderingsystem.demo.POJO.Bill;
 import com.foodorderingsystem.demo.service.BillService;
 import com.foodorderingsystem.demo.utils.FoodUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.pdfbox.io.IOUtils;
 import org.json.JSONArray;
 import org.springframework.http.HttpStatus;
@@ -24,17 +26,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BillServiceImpl implements BillService {
     private final BillDao billDao;
     private final JwtFilter jwtFilter;
+
     @Override
     public ResponseEntity<String> generateReport(Map<String, Object> requestMap) {
         try {
             String fileName;
-            if(this.validateRequestMap(requestMap)){
-                if(requestMap.containsKey("isGenerate") && !(Boolean)requestMap.get("isGenerate")){
+            if (this.validateRequestMap(requestMap)) {
+                if (requestMap.containsKey("isGenerate") && !(Boolean) requestMap.get("isGenerate")) {
                     fileName = (String) requestMap.get("uuid");
                 } else {
                     fileName = FoodUtils.getUUID();
@@ -42,11 +46,13 @@ public class BillServiceImpl implements BillService {
                     this.insertBill(requestMap);
                 }
 
-                String data = "Name: " + requestMap.get("name") + "\nContact Number: " + requestMap.get("contactNumber") +
+                String data = "Name: " + requestMap.get("name") + "\nContact Number: " + requestMap.get("contactNumber")
+                        +
                         "\nEmail: " + requestMap.get("email") + "\nPayment Method: " + requestMap.get("paymentMethod");
 
                 Document document = new Document();
-                PdfWriter.getInstance(document, new FileOutputStream(FoodConstants.STORE_LOCATION+"/"+fileName+".pdf"));
+                PdfWriter.getInstance(document,
+                        new FileOutputStream(FoodConstants.STORE_LOCATION + "/" + fileName + ".pdf"));
                 document.open();
 
                 this.setRectangleInPdf(document);
@@ -63,19 +69,21 @@ public class BillServiceImpl implements BillService {
                 this.addTableHeader(table);
 
                 JSONArray jsonArray = FoodUtils.getJsonArrayFromString((String) requestMap.get("productDetails"));
-                for(int i = 0; i<jsonArray.length(); i++){
+                for (int i = 0; i < jsonArray.length(); i++) {
                     this.addRows(table, FoodUtils.getMapFromJson(jsonArray.getString(i)));
                 }
                 document.add(table);
 
-                Paragraph footer = new Paragraph("Total: " + requestMap.get("totalAmount") + "\n" + "Thank you for visiting.",this.getFont("Data"));
+                Paragraph footer = new Paragraph(
+                        "Total: " + requestMap.get("totalAmount") + "\n" + "Thank you for visiting.",
+                        this.getFont("Data"));
                 document.add(footer);
                 document.close();
-                return new ResponseEntity<>("{\"uuid\":\""+fileName+"\"}", HttpStatus.OK);
+                return new ResponseEntity<>("{\"uuid\":\"" + fileName + "\"}", HttpStatus.OK);
 
-
-            } else return FoodUtils.getResponseEntity("Required data not found", HttpStatus.BAD_REQUEST);
-        } catch (Exception exception){
+            } else
+                return FoodUtils.getResponseEntity("Required data not found", HttpStatus.BAD_REQUEST);
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
         return FoodUtils.getResponseEntity(FoodConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -85,12 +93,14 @@ public class BillServiceImpl implements BillService {
     public ResponseEntity<List<Bill>> getBills() {
         List<Bill> bills = new ArrayList<>();
         try {
-            if(jwtFilter.isAdmin()){
-                 bills = billDao.getBills();
+            if (jwtFilter.isAdmin()) {
+                bills = billDao.getBills();
+                return new ResponseEntity<>(bills, HttpStatus.OK);
             } else {
                 bills = billDao.getBillByUsername(jwtFilter.getCurrentUser());
+                return new ResponseEntity<>(bills, HttpStatus.OK);
             }
-        } catch (Exception exception){
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
         return new ResponseEntity<>(bills, HttpStatus.NOT_FOUND);
@@ -100,11 +110,11 @@ public class BillServiceImpl implements BillService {
     public ResponseEntity<byte[]> getPdf(Map<String, Object> requestMap) {
         try {
             byte[] bytes = new byte[0];
-            if(!requestMap.containsKey("uuid") && this.validateRequestMap(requestMap)){
+            if (!requestMap.containsKey("uuid") && this.validateRequestMap(requestMap)) {
                 return new ResponseEntity<>(bytes, HttpStatus.BAD_REQUEST);
             }
-            String filePath = FoodConstants.STORE_LOCATION+"/"+(String) requestMap.get("uuid") + ".pdf";
-            if(FoodUtils.isFileExists(filePath)){
+            String filePath = FoodConstants.STORE_LOCATION + "/" + (String) requestMap.get("uuid") + ".pdf";
+            if (FoodUtils.isFileExists(filePath)) {
                 bytes = this.getByteArray(filePath);
                 return new ResponseEntity<>(bytes, HttpStatus.OK);
             } else {
@@ -113,7 +123,7 @@ public class BillServiceImpl implements BillService {
                 bytes = this.getByteArray(filePath);
                 return new ResponseEntity<>(bytes, HttpStatus.OK);
             }
-        } catch (Exception exception){
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
         return null;
@@ -123,11 +133,13 @@ public class BillServiceImpl implements BillService {
     public ResponseEntity<String> deleteBill(Integer id) {
         try {
             Optional<Bill> billOptional = billDao.findById(id);
-            if(billOptional.isPresent()){
+            if (billOptional.isPresent()) {
                 billDao.deleteById(id);
-                return FoodUtils.getResponseEntity("Bill "+billOptional.get().getUuid() + " was deleted successfully", HttpStatus.OK);
-            } else return FoodUtils.getResponseEntity("Bill with id " + id + " does not exists", HttpStatus.NOT_FOUND);
-        } catch (Exception exception){
+                return FoodUtils.getResponseEntity("Bill " + billOptional.get().getUuid() + " was deleted successfully",
+                        HttpStatus.OK);
+            } else
+                return FoodUtils.getResponseEntity("Bill with id " + id + " does not exists", HttpStatus.NOT_FOUND);
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
         return FoodUtils.getResponseEntity(FoodConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -144,7 +156,7 @@ public class BillServiceImpl implements BillService {
     private void addRows(PdfPTable table, Map<String, Object> data) {
         table.addCell((String) data.get("name"));
         table.addCell((String) data.get("category"));
-        table.addCell((String) data.get("quantity"));
+        table.addCell(Double.toString((Double) data.get("quantity")));
         table.addCell(Double.toString((Double) data.get("price")));
         table.addCell(Double.toString((Double) data.get("total")));
     }
@@ -163,8 +175,8 @@ public class BillServiceImpl implements BillService {
                 });
     }
 
-    private Font getFont(String type){
-        switch (type){
+    private Font getFont(String type) {
+        switch (type) {
             case "Header":
                 Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLDOBLIQUE, 18, BaseColor.BLACK);
                 headerFont.setStyle(Font.BOLD);
@@ -177,8 +189,9 @@ public class BillServiceImpl implements BillService {
                 return new Font();
         }
     }
+
     private void setRectangleInPdf(Document document) throws DocumentException {
-        Rectangle rectangle = new Rectangle(577, 825, 18,15);
+        Rectangle rectangle = new Rectangle(577, 825, 18, 15);
         rectangle.enableBorderSide(1);
         rectangle.enableBorderSide(2);
         rectangle.enableBorderSide(4);
@@ -196,11 +209,11 @@ public class BillServiceImpl implements BillService {
             bill.setEmail((String) requestMap.get("email"));
             bill.setContactNumber((String) requestMap.get("contactNumber"));
             bill.setPaymentMethod((String) requestMap.get("paymentMethod"));
-            bill.setTotal(Integer.parseInt((String) requestMap.get("totalAmount")));
+            bill.setTotal((Integer) requestMap.get("totalAmount"));
             bill.setProductDetail((String) requestMap.get("productDetails"));
             bill.setCreatedBy(jwtFilter.getCurrentUser());
             billDao.save(bill);
-        } catch (Exception exception){
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
     }

@@ -73,7 +73,7 @@ export class ManageOrderComponent implements OnInit {
     this.categoryService.getCategories().subscribe(
       (resp: any) => {
         this.ngxService.stop();
-        this.categories = resp.data;
+        this.categories = resp;
       },
       (error) => {
         this.ngxService.stop();
@@ -90,7 +90,7 @@ export class ManageOrderComponent implements OnInit {
   getProductsByCategory(value: any) {
     this.productService.getProductsByCategory(value.id).subscribe(
       (resp: any) => {
-        this.products = resp.data;
+        this.products = resp;
         this.manageOrderForm.controls.price.setValue('');
         this.manageOrderForm.controls.quantity.setValue('');
         this.manageOrderForm.controls.total.setValue(0);
@@ -110,8 +110,8 @@ export class ManageOrderComponent implements OnInit {
   getProductDetails(value: any) {
     this.productService.getById(value.id).subscribe(
       (resp: any) => {
-        this.price = resp.data.price;
-        this.manageOrderForm.controls.price.setValue(resp.data.price);
+        this.price = resp.price;
+        this.manageOrderForm.controls.price.setValue(resp.price);
         this.manageOrderForm.controls.quantity.setValue(1);
         this.manageOrderForm.controls.total.setValue(this.price * 1);
       },

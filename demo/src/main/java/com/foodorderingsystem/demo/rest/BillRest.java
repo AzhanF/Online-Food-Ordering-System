@@ -9,12 +9,15 @@ import java.util.Map;
 
 @RequestMapping("/bill")
 public interface BillRest {
-    @PostMapping("/generate-report")
+    @PostMapping("/generateReport")
     public ResponseEntity<String> generateReport(@RequestBody Map<String, Object> requestMap);
-    @GetMapping
+
+    @GetMapping("/getBills")
     public ResponseEntity<List<Bill>> getBills();
-    @PostMapping("/get-pdf")
+
+    @PostMapping("/getPDF")
     public ResponseEntity<byte[]> getPdf(@RequestBody Map<String, Object> requestMap);
-    @DeleteMapping("/{id}")
+
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteBill(@PathVariable Integer id);
 }
