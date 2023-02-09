@@ -18,7 +18,7 @@ export class CategoryService {
   }
 
   update(data: any) {
-    return this.http.patch(`${this.url}/category/update`, data, this.jsonHeader);
+    return this.http.post(`${this.url}/category/update`, data, this.jsonHeader);
   }
 
   getCategories() {
